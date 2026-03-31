@@ -483,7 +483,7 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
             {/* 헤더 */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <button type="button" onClick={onReset} style={{ ...SE, fontSize: 9, color: C.ink3, background: "none", border: "none", cursor: "pointer", borderBottom: `1px dotted rgba(110,84,40,0.36)`, padding: "0 0 1px" }}>종이약국  ·  Paper-Pharmacy</button>
+                <button type="button" onClick={onReset} style={{ ...SE, fontSize: 9, color: C.ink3, background: "none", border: "none", cursor: "pointer", borderBottom: `1px dotted rgba(110,84,40,0.36)`, padding: "0 0 1px" }}>마음서재  ·  Mind Library</button>
                 <button type="button" onClick={onReset} style={{ background: "none", border: "none", cursor: "pointer", color: C.ink3, opacity: 0.65, fontSize: 13, padding: 0, lineHeight: 1 }}>↺</button>
               </div>
             </div>
@@ -506,8 +506,8 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
                 <span key={i} style={{ ...SE, fontSize: 10, padding: "2px 7px", border: `1px solid rgba(110,84,40,0.35)`, borderRadius: 9, color: "#6a5030", background: "rgba(255,248,220,0.7)" }}>{t}</span>
               ))}
             </div>
-            {/* 처방 이유 */}
-            <SH label="처방  이유" />
+            {/* 추천 이유 */}
+            <SH label="추천  이유" />
             <div style={{ border: `1px solid ${C.bdr}`, borderRadius: 4, padding: "8px 10px", background: C.box, marginBottom: 8 }}>
               <p style={{ ...GB, fontSize: 10.5, color: C.ink, lineHeight: 1.85, textAlign: "justify" }}>{book.why_this_book}</p>
             </div>
@@ -529,7 +529,7 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
 
           {/* 오른쪽 페이지 */}
           <div style={{ flex: 1, padding: "20px 20px 60px 16px", position: "relative", ...paperStyle(C.page2) }}>
-            <div style={{ ...SE, fontSize: 9, color: C.ink3, letterSpacing: "0.12em", textAlign: "right", marginBottom: 10 }}>처방전  No. {String(bookIdx + 1).padStart(4, "0")}</div>
+            <div style={{ ...SE, fontSize: 9, color: C.ink3, letterSpacing: "0.12em", textAlign: "right", marginBottom: 10 }}>서재 기록  No. {String(bookIdx + 1).padStart(4, "0")}</div>
             {/* 치유 포인트 */}
             <SH label="치유  포인트" />
             <div style={{ border: `1px solid ${C.bdr}`, borderRadius: 4, padding: "7px 9px", marginBottom: 6, background: C.box }}>
@@ -590,7 +590,7 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
         {/* 상단 바 */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 15px 9px", background: C.page1, borderBottom: `1px solid rgba(180,160,120,0.2)` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <span style={{ ...SE, fontSize: 10, color: "#222", letterSpacing: "1px" }}>종이약국</span>
+            <span style={{ ...SE, fontSize: 10, color: "#222", letterSpacing: "1px" }}>마음서재</span>
             <button type="button" onClick={onReset} style={{ background: "none", border: "none", cursor: "pointer", color: C.ink3, opacity: 0.6, fontSize: 12, padding: 0 }}>↺</button>
           </div>
           <span style={{ ...SE, fontSize: 9, color: "#888", letterSpacing: "1px" }}>No. {String(bookIdx + 1).padStart(4, "0")}</span>
@@ -613,7 +613,7 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
               </div>
             </div>
           </div>
-          <SH label="처방  이유" />
+          <SH label="추천  이유" />
           <div style={{ border: `1px solid ${C.bdr}`, borderRadius: 4, padding: "8px 10px", background: C.box, marginBottom: 4 }}>
             <p style={{ ...GB, fontSize: 10, color: C.ink, lineHeight: 1.85 }}>{book.why_this_book}</p>
           </div>
@@ -668,7 +668,7 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
           <div style={{ width: 4, height: 4, borderRadius: "50%", background: "rgba(110,84,40,0.28)" }} />
           {bookIdx < data.recommended_books.length - 1
             ? <button type="button" onClick={handleNextBook} style={{ ...SE, fontSize: 9, color: C.ink2, background: "none", border: "none", cursor: "pointer" }}>다음 책 →</button>
-            : <span style={{ ...SE, fontSize: 9, color: "rgba(110,84,40,0.3)" }}>마지막 처방</span>}
+            : <span style={{ ...SE, fontSize: 9, color: "rgba(110,84,40,0.3)" }}>마지막 책</span>}
         </div>
       </div>
     );
@@ -752,9 +752,9 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
             <div>
               <h2 style={{ ...SE, fontSize: 16, color: C.ink, display: "flex", alignItems: "center", gap: 6 }}>
-                <Heart style={{ width: 16, height: 16, color: C.seal }} /> 감정 진단서
+                <Heart style={{ width: 16, height: 16, color: C.seal }} /> 마음 기록
               </h2>
-              <p style={{ ...SE, fontSize: 10, marginTop: 2, color: C.ink3, fontStyle: "italic" }}>Diagnosis of the Soul</p>
+              <p style={{ ...SE, fontSize: 10, marginTop: 2, color: C.ink3, fontStyle: "italic" }}>Record of the Mind</p>
             </div>
             <div style={{ ...SE, fontSize: 12, padding: "3px 12px", borderRadius: 20, background: "rgba(242,234,216,0.9)", color: C.ink2, fontWeight: 700 }}>강도 {data.emotional_analysis.intensity}/10</div>
           </div>
@@ -764,12 +764,12 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
           <p style={{ ...GB, fontSize: 13.5, background: C.page1, padding: "12px 14px", borderRadius: 10, color: C.ink, lineHeight: 1.75 }}>"{data.emotional_analysis.empathy_message}"</p>
         </section>
 
-        {/* 처방 도서 목록 */}
+        {/* 추천 도서 목록 */}
         <section style={{ marginBottom: 24 }}>
           <h3 style={{ ...SE, fontSize: 18, textAlign: "center", color: C.ink, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 6 }}>
-            <span style={{ flex: 1, height: 1, background: C.bdr }} />처방 도서<span style={{ flex: 1, height: 1, background: C.bdr }} />
+            <span style={{ flex: 1, height: 1, background: C.bdr }} />추천 도서<span style={{ flex: 1, height: 1, background: C.bdr }} />
           </h3>
-          <p style={{ ...SE, fontSize: 10, textAlign: "center", color: C.ink3, marginBottom: 14 }}>책을 선택하면 처방전이 펼쳐집니다</p>
+          <p style={{ ...SE, fontSize: 10, textAlign: "center", color: C.ink3, marginBottom: 14 }}>책을 선택하면 서재 기록이 펼쳐집니다</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {data.recommended_books.map((book, index) => {
               const key = getBookKey(book);
@@ -789,11 +789,11 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
           </div>
         </section>
 
-        {/* 마음을 위한 추가 처방 */}
+        {/* 마음을 위한 추가 추천 */}
         {curatedBooks.length > 0 && (
           <section style={{ marginBottom: 24 }}>
             <h3 style={{ ...SE, fontSize: 18, textAlign: "center", color: C.ink, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 14 }}>
-              <span style={{ flex: 1, height: 1, background: C.bdr }} />마음을 위한 추가 처방<span style={{ flex: 1, height: 1, background: C.bdr }} />
+              <span style={{ flex: 1, height: 1, background: C.bdr }} />마음을 위한 추가 추천<span style={{ flex: 1, height: 1, background: C.bdr }} />
             </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {curatedBooks.map((book, idx) => (
@@ -836,7 +836,7 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
 
         <div style={{ paddingTop: 8 }}>
           <button type="button" onClick={onReset} style={{ ...SE, display: "flex", alignItems: "center", gap: 4, fontSize: 11, padding: "6px 14px", borderRadius: 20, border: `1px solid ${C.ink}`, background: C.ink, color: C.page1, cursor: "pointer" }}>
-            새로운 처방 받기
+            새로운 기록 시작하기
           </button>
         </div>
       </div>
