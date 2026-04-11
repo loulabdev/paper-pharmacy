@@ -26,8 +26,8 @@
   --seal-light: #D4A882;
 
   --font-serif: 'Gowun Batang', 'Noto Serif KR', Georgia, serif;
-  --font-sans:  'Pretendard', 'Apple SD Gothic Neo', system-ui, sans-serif;
-  --font-mono:  'Courier Prime', 'Courier New', monospace;
+  --font-sans:  'Gowun Mono', 'Courier New', monospace;
+  --font-mono:  'Gowun Mono', 'Courier New', monospace;
 
   --grid-line:        rgba(130, 100, 60, 0.06);
   --grid-line-accent: rgba(130, 100, 60, 0.10);

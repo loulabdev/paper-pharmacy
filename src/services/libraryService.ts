@@ -210,7 +210,7 @@ const uniqueByLibrary = (items: LibraryAvailability[]) => {
 
 const fetchLoanAvailability = async (isbn13: string, libCode?: string): Promise<boolean | undefined> => {
   if (!libCode || isPlaceholderKey(LIBRARY_API_KEY)) return undefined;
-  const url = `https://data4library.kr/api/bookExist?authKey=${encodeURIComponent(LIBRARY_API_KEY)}&libCode=${encodeURIComponent(libCode)}&isbn13=${encodeURIComponent(isbn13)}`;
+  const url = `/api/library/bookExist?authKey=${encodeURIComponent(LIBRARY_API_KEY)}&libCode=${encodeURIComponent(libCode)}&isbn13=${encodeURIComponent(isbn13)}`;
   try {
     const xml = await limitConcurrency(() => fetchXml(url));
     return parseLoanAvailability(xml);
@@ -224,7 +224,7 @@ const fetchLoanAvailability = async (isbn13: string, libCode?: string): Promise<
 // ============================================================
 
 const fetchHoldingLibrariesByRegion = async (isbn13: string, regionCode: string): Promise<LibraryAvailability[]> => {
-  const url = `https://data4library.kr/api/libSrchByBook?authKey=${encodeURIComponent(LIBRARY_API_KEY)}&isbn=${encodeURIComponent(isbn13)}&region=${encodeURIComponent(regionCode)}`;
+  const url = `/api/library/libSrchByBook?authKey=${encodeURIComponent(LIBRARY_API_KEY)}&isbn=${encodeURIComponent(isbn13)}&region=${encodeURIComponent(regionCode)}`;
   try {
     const xml = await limitConcurrency(() => fetchXml(url));
     return parseHoldingLibraries(xml);
@@ -245,7 +245,7 @@ const fetchLibraryInfoNationwide = async (): Promise<Record<string, Partial<Libr
   console.log("[Library] 도서관 정보 전국 조회 시작");
   const chunks = await Promise.all(
     REGION_CODES.map(async (regionCode) => {
-      const url = `https://data4library.kr/api/libSrch?authKey=${encodeURIComponent(LIBRARY_API_KEY)}&region=${encodeURIComponent(regionCode)}&pageNo=1&pageSize=300`;
+      const url = `/api/library/libSrch?authKey=${encodeURIComponent(LIBRARY_API_KEY)}&region=${encodeURIComponent(regionCode)}&pageNo=1&pageSize=300`;
       try {
         const xml = await limitConcurrency(() => fetchXml(url));
         return parseLibraryInfo(xml);

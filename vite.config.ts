@@ -28,6 +28,12 @@ export default defineConfig(({ mode }) => {
             "X-Naver-Client-Secret": env.VITE_NAVER_CLIENT_SECRET || "",
           },
         },
+        // 도서관 정보나루 API 프록시 (CORS 우회)
+        "/api/library": {
+          target: "https://data4library.kr",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/library/, "/api"),
+        },
         // 국립중앙도서관 ISBN API 프록시
         "/api/nl-seoji": {
           target: "https://www.nl.go.kr",
