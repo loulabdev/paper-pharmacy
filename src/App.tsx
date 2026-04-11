@@ -83,6 +83,7 @@ const App: React.FC = () => {
   const [selectedSeason,     setSelectedSeason]     = useState<SeasonOption | null>(null);
   const [emotionPopupSeason, setEmotionPopupSeason] = useState<SeasonOption | null>(null);
   const [pickedEmotions,     setPickedEmotions]     = useState<string[]>([]);
+  const [isMenuOpen,         setIsMenuOpen]         = useState(false);
 
   useEffect(() => {
     setSavedPrescriptions(getSavedPrescriptions());
@@ -102,6 +103,35 @@ const App: React.FC = () => {
   }, []);
 
   const refreshBookmarks = () => setBookmarks(getBookBookmarks());
+
+  const handleShare = async () => {
+    setIsMenuOpen(false);
+    const lines: string[] = ["📚 마음서가 기록\n"];
+    if (savedPrescriptions.length > 0) {
+      lines.push("[ 서가 기록 ]");
+      savedPrescriptions.slice(0, 5).forEach(p => {
+        lines.push(`• ${p.userInput.slice(0, 30)}${p.userInput.length > 30 ? "…" : ""}`);
+        p.prescription.recommended_books.slice(0, 2).forEach(b => {
+          lines.push(`  └ 《${b.title}》 ${b.author}`);
+        });
+      });
+    }
+    if (bookmarks.length > 0) {
+      lines.push("\n[ 북마크 도서 ]");
+      bookmarks.slice(0, 10).forEach(b => {
+        lines.push(`• 《${b.book.title}》 ${b.book.author}`);
+      });
+    }
+    const text = lines.join("\n");
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "마음서가 기록", text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        alert("클립보드에 복사되었습니다!");
+      }
+    } catch { /* 취소 시 무시 */ }
+  };
 
   const handleResetStorage = () => {
     if (!window.confirm("북마크와 서가 기록을 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.")) return;
@@ -208,12 +238,21 @@ const App: React.FC = () => {
             }
             @keyframes fadeInAnalyze { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
             @keyframes dotPulse { 0%,80%,100%{opacity:0.2;transform:scale(0.9);} 40%{opacity:1;transform:scale(1.2);} }
+            @keyframes maplefall {
+              0%   { transform: translate(0,-28px) rotate(-30deg) scale(0.2); opacity:0; }
+              20%  { opacity:1; }
+              70%  { transform: translate(0,4px) rotate(6deg) scale(1.05); }
+              85%  { transform: translate(0,-1px) rotate(4deg) scale(0.98); }
+              100% { transform: translate(0,0px) rotate(5deg) scale(1); opacity:1; }
+            }
+            .maple-g { animation: maplefall 2s cubic-bezier(0.4,0,0.2,1) both; animation-delay:0.4s; }
+            @media(prefers-reduced-motion:reduce){ .maple-g { animation:none; transform:translate(0,0) rotate(5deg) scale(1); opacity:1; } }
           ` }} />
 
           {/* 오픈북 외곽 */}
           <div style={{ width: "100%", maxWidth: 920, border: `3px solid ${GREEN_DARK}`, borderRadius: 6, boxShadow: "0 10px 26px rgba(0,0,0,0.16),0 2px 8px rgba(0,0,0,0.08)", position: "relative", marginTop: 12 }}>
             <div style={{ position: "absolute", left: -3, right: -3, top: -13, height: 13, background: `linear-gradient(to bottom,#0f2018,${GREEN_DARK} 60%,#4f6b59)`, border: `3px solid ${GREEN_DARK}`, borderBottom: "none", borderRadius: "4px 4px 0 0", zIndex: 20 }} />
-            <div style={{ position: "absolute", left: 6, right: 6, bottom: -8, height: 8, background: "linear-gradient(to bottom,#d0c09a,#a89060)", borderRadius: "0 0 3px 3px", zIndex: 20 }} />
+
 
             <div className="book-inner" style={{ display: "flex" }}>
               {/* 왼쪽 엣지 */}
@@ -226,11 +265,31 @@ const App: React.FC = () => {
                 {/* 로고 배너 */}
                 <div style={{ background: `linear-gradient(135deg,${GREEN_DARK} 0%,#1a3224 100%)`, borderRadius: 10, padding: "14px 16px", marginBottom: 16, boxShadow: "0 6px 18px rgba(0,0,0,0.12)" }}>
                   <div style={{ display: "flex", alignItems: "flex-start", gap: 11 }}>
-                    <div style={{ flexShrink: 0, width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(200,160,64,0.12)", border: "1px solid rgba(200,160,64,0.28)", color: GOLD_DIM, fontFamily: F, fontSize: 15 }}>℞</div>
+                    <div style={{ flexShrink: 0, width: 52, marginTop: -8, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+                      <svg width="52" height="80" viewBox="-22 -42 44 62" xmlns="http://www.w3.org/2000/svg">
+                        {/* 책1: 민트 — 라벤더 방향(오른쪽)으로 기댐 */}
+                        <g transform="rotate(20, -2, 18)">
+                          <rect x="-18" y="-4" width="11" height="22" rx="2" fill="#a8d8c8"/>
+                          <rect x="-18" y="-4" width="2.5" height="22" fill="#7ab8a4"/>
+                        </g>
+                        {/* 책2: 라벤더 — 곧게 */}
+                        <rect x="-2"  y="-22" width="14" height="40" rx="2" fill="#c4b8d8"/>
+                        <rect x="-2"  y="-22" width="2.5" height="40" fill="#a098b8"/>
+                        {/* Twemoji 단풍잎 — 두 책 사이 */}
+                        <g className="maple-g" style={{ transformOrigin: "-5px -10px" }}>
+                          <g transform="translate(-5,-10) scale(0.48) translate(-18,-18)">
+                            <path fill="#DD2E44" d="M36 20.917c0-.688-2.895-.5-3.125-1s3.208-4.584 2.708-5.5s-5.086 1.167-5.375.708c-.288-.458.292-3.5-.208-3.875s-5.25 4.916-5.917 4.292c-.666-.625 1.542-10.5 1.086-10.698c-.456-.198-3.419 1.365-3.793 1.282C21.002 6.042 18.682 0 18 0s-3.002 6.042-3.376 6.125c-.374.083-3.337-1.48-3.793-1.282c-.456.198 1.752 10.073 1.085 10.698C11.25 16.166 6.5 10.875 6 11.25s.08 3.417-.208 3.875c-.289.458-4.875-1.625-5.375-.708s2.939 5 2.708 5.5s-3.125.312-3.125 1s8.438 5.235 9 5.771c.562.535-2.914 2.802-2.417 3.229c.576.496 3.839-.83 10.417-.957V35a1 1 0 1 0 2 0v-6.04c6.577.127 9.841 1.453 10.417.957c.496-.428-2.979-2.694-2.417-3.229c.562-.536 9-5.084 9-5.771z"/>
+                          </g>
+                        </g>
+                        {/* 선반 */}
+                        <rect x="-22" y="18"  width="40" height="5.5" rx="1.5" fill="#a07828"/>
+                        <rect x="-20" y="23"  width="36" height="2.5" rx="1"   fill="#8a6420" opacity="0.55"/>
+                      </svg>
+                    </div>
                     <div>
                       <p style={{ fontFamily: F, fontSize: 9, letterSpacing: "0.14em", color: GOLD_DIM, marginBottom: 3 }}>마음서가 · Mind Shelf</p>
-                      <h1 style={{ fontFamily: F, fontSize: 16, color: PAGE2, lineHeight: 1.35, marginBottom: 4 }}>이 순간의 마음을 기록하는<br />작은 서가</h1>
-                      <p style={{ fontFamily: GB_FONT, fontSize: 12, color: "rgba(245,240,228,0.7)", lineHeight: 1.7 }}>감정을 기록하면 사서가 당신의 마음에<br />공명하는 책을 골라드립니다.</p>
+                      <h1 style={{ fontFamily: F, fontSize: 16, color: PAGE2, lineHeight: 1.35, marginBottom: 4 }}>마음을 기록하는, 작은 서가</h1>
+                      <p style={{ fontFamily: GB_FONT, fontSize: 12, color: "rgba(245,240,228,0.7)", lineHeight: 1.7 }}>감정을 기록하면 마음과 공명하는 책을 골라드립니다.</p>
                     </div>
                   </div>
                 </div>
@@ -280,21 +339,46 @@ const App: React.FC = () => {
               <div style={{ flex: 1, ...paperStyle(PAGE2), padding: "22px 20px 30px 18px", display: "flex", flexDirection: "column", gap: 13, position: "relative", overflow: "visible" }}>
 
                 {/* 타이틀 */}
-                <div style={{ textAlign: "center", paddingBottom: 10, borderBottom: `1px dashed ${BORDER}`, position: "relative" }}>
-                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, display: "flex", justifyContent: "space-between", alignItems: "center", pointerEvents: "none" }}>
-                    <button type="button" onClick={() => setIsSavedOpen(p => !p)} style={{ background: "none", border: "none", cursor: "pointer", color: MUTED, opacity: 0.7, padding: 2, pointerEvents: "auto", display: "flex", alignItems: "center" }}>
-                      <Bookmark style={{ width: 14, height: 14 }} />
-                    </button>
-                    <button type="button" onClick={handleReset} style={{ background: "none", border: "none", cursor: "pointer", color: MUTED, opacity: 0.7, padding: 2, pointerEvents: "auto", display: "flex", alignItems: "center" }}>
+                <div style={{ paddingBottom: 10, borderBottom: `1px dashed ${BORDER}`, position: "relative" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 3 }}>
+                    <button type="button" onClick={handleReset} style={{ background: "none", border: "none", cursor: "pointer", color: MUTED, opacity: 0.7, padding: 2, display: "flex", alignItems: "center" }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
                     </button>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 3 }}>
                     <h2 style={{ fontFamily: F, fontSize: 21, color: INK, letterSpacing: "0.04em", margin: 0 }}>마음서가</h2>
                     <span style={{ fontFamily: F, fontSize: 12, color: MUTED }}>·</span>
                     <span style={{ fontFamily: F, fontSize: 11, color: MUTED, letterSpacing: "0.06em" }}>Mind Shelf</span>
+                    {/* ⋯ 메뉴 */}
+                    <div style={{ position: "relative" }}>
+                      <button type="button" onClick={() => setIsMenuOpen(p => !p)}
+                        style={{ background: isMenuOpen ? "rgba(110,84,40,0.08)" : "none", border: `1px solid rgba(110,84,40,0.3)`, borderRadius: 5, cursor: "pointer", padding: "4px 7px", display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 20, transition: "all 0.15s" }}>
+                        <svg width="10" height="7" viewBox="0 0 10 7">
+                          {isMenuOpen
+                            ? <path d="M1 6L5 1L9 6" fill="none" stroke="rgba(110,84,40,0.8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            : <path d="M1 1L5 6L9 1" fill="none" stroke="rgba(142,122,91,0.8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          }
+                        </svg>
+                      </button>
+                      {isMenuOpen && (
+                        <>
+                          {/* 바깥 클릭 닫기 */}
+                          <div style={{ position: "fixed", inset: 0, zIndex: 99 }} onClick={() => setIsMenuOpen(false)} />
+                          <div style={{ position: "absolute", top: "calc(100% + 4px)", right: 0, zIndex: 100, background: "#fdf8ee", border: `1px solid ${BORDER}`, borderRadius: 8, boxShadow: "0 4px 14px rgba(0,0,0,0.10)", minWidth: 130, overflow: "hidden" }}>
+                            <button type="button" onClick={handleShare}
+                              style={{ width: "100%", textAlign: "left", padding: "9px 13px", fontFamily: F, fontSize: 11, color: INK, background: "none", border: "none", cursor: "pointer", borderBottom: `1px dashed ${BORDER}`, display: "flex", alignItems: "center", gap: 6 }}>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                              공유하기
+                            </button>
+                            <button type="button" onClick={() => { setIsMenuOpen(false); handleResetStorage(); }}
+                              style={{ width: "100%", textAlign: "left", padding: "9px 13px", fontFamily: F, fontSize: 11, color: "#9a4a3a", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                              ⚠ 기록 전체 삭제
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <p style={{ fontFamily: GB_FONT, fontSize: 12, color: MUTED }}>마음을 기록하고, 책을 만나보세요</p>
+                  <p style={{ fontFamily: GB_FONT, fontSize: 12, color: MUTED, textAlign: "center" }}>마음을 기록하고, 책을 만나보세요</p>
                 </div>
 
                 {/* 마음의 계절 선택 */}
@@ -372,8 +456,13 @@ const App: React.FC = () => {
                       style={{ width: "100%", padding: "14px 50px 14px 14px", background: "transparent", border: "none", outline: "none", fontFamily: GB_FONT, fontSize: 13.5, color: INK, lineHeight: 1.85, resize: "none", boxSizing: "border-box" }}
                     />
                     <button type="button" onClick={() => handleSubmit()} disabled={!input.trim()}
-                      style={{ position: "absolute", right: 10, bottom: 10, width: 34, height: 34, borderRadius: "50%", background: input.trim() ? GREEN_DARK : "rgba(110,84,40,0.14)", color: PAGE2, border: "none", cursor: input.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontFamily: F, transition: "all 0.2s", boxShadow: input.trim() ? "0 3px 8px rgba(46,74,56,0.18)" : "none" }}
-                      aria-label="감정 제출">→</button>
+                      style={{ position: "absolute", right: 10, bottom: 10, width: 34, height: 34, borderRadius: "50%", background: input.trim() ? GREEN_DARK : "rgba(110,84,40,0.14)", color: PAGE2, border: "none", cursor: input.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s", boxShadow: input.trim() ? "0 3px 8px rgba(46,74,56,0.18)" : "none" }}
+                      aria-label="감정 제출">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                      </svg>
+                    </button>
                   </div>
                   <div style={{ padding: "5px 12px", borderTop: `1px dashed ${BORDER}`, display: "flex", alignItems: "center", gap: 5 }}>
                     <Leaf style={{ width: 9, height: 9, color: MUTED, flexShrink: 0 }} />
@@ -449,12 +538,6 @@ const App: React.FC = () => {
                   )}
                 </div>
 
-                {/* 기록 전체 삭제 */}
-                <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: 2 }}>
-                  <button type="button" onClick={handleResetStorage} style={{ fontFamily: F, fontSize: 9.5, color: "#9a4a3a", background: "none", border: "none", cursor: "pointer", opacity: 0.65 }}>
-                    기록 전체 삭제
-                  </button>
-                </div>
               </div>
 
               {/* 오른쪽 엣지 */}
