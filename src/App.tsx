@@ -13,7 +13,6 @@ import {
   Clock3, Trash2, Bookmark, ChevronDown, ChevronUp, X, BookOpen, Leaf,
 } from "lucide-react";
 
-// ─── 마음 계절 옵션 ────────────────────────────────────────────────────────────
 type SeasonOption = {
   label: string;
   emoji: string;
@@ -48,14 +47,12 @@ const SEASON_OPTIONS: SeasonOption[] = [
   },
 ];
 
-// ─── 유틸 ─────────────────────────────────────────────────────────────────────
 const formatRxNum = (id: string) => `No. ${id.slice(0, 4).toUpperCase()}`;
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
 
-// ─── 디자인 토큰 ───────────────────────────────────────────────────────────────
-const F         = "'Gowun Batang', 'Noto Serif KR', Georgia, serif";   // 제목·브랜드·사서의 한 마디
-const GB_FONT   = "'Gowun Mono', 'Courier New', monospace";             // 본문·라벨·버튼
+const F         = "'Gowun Batang', 'Noto Serif KR', Georgia, serif";
+const GB_FONT   = "'Gowun Mono', 'Courier New', monospace";
 const BG        = "#f5efe3";
 const PAGE1     = "#f5efe3";
 const PAGE2     = "#f8f4ea";
@@ -70,7 +67,6 @@ const MUTED     = "#8e7a5b";
 const linesBg = `repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(110,84,40,0.025) 30px,rgba(110,84,40,0.025) 31px)`;
 const paperStyle = (bg: string): React.CSSProperties => ({ backgroundColor: bg, backgroundImage: linesBg });
 
-// ─── 앱 ───────────────────────────────────────────────────────────────────────
 const App: React.FC = () => {
   const [input,              setInput]              = useState("");
   const [appState,           setAppState]           = useState<AppState>(AppState.IDLE);
@@ -88,7 +84,6 @@ const App: React.FC = () => {
   useEffect(() => {
     setSavedPrescriptions(getSavedPrescriptions());
     setBookmarks(getBookBookmarks());
-    // 마지막 처방 복원
     try {
       const raw = localStorage.getItem("lastPrescription");
       if (raw) {
@@ -163,7 +158,7 @@ const App: React.FC = () => {
       const msg = err instanceof Error ? err.message : JSON.stringify(err);
       setError("오류: " + msg);
       setAppState(AppState.ERROR);
-    }  
+    }
   };
 
   const handleReset = () => {
@@ -171,7 +166,6 @@ const App: React.FC = () => {
     refreshBookmarks(); setSelectedSeason(null);
     setEmotionPopupSeason(null); setPickedEmotions([]);
     setAppState(AppState.IDLE);
-    // 새로운 기록 시작 시 복원 데이터 제거
     try { localStorage.removeItem("lastPrescription"); } catch { /* 무시 */ }
   };
 
@@ -200,7 +194,6 @@ const App: React.FC = () => {
   const toggleEmotion = (e: string) => {
     setPickedEmotions(prev => {
       const next = prev.includes(e) ? prev.filter(p => p !== e) : [...prev, e];
-      // 입력창에 이전 감정 제거 후 새 감정 추가
       setInput(inp => {
         let cleaned = inp;
         prev.forEach(p => { cleaned = cleaned.replace(p, "").replace(/\s+/g, " ").trim(); });
@@ -222,22 +215,8 @@ const App: React.FC = () => {
   };
 
   // ── IDLE ──────────────────────────────────────────────────────────────────
-  if (appState === AppState.ERROR) {
-  return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: BG, fontFamily: F, padding: "24px" }}>
-      <div style={{ background: "#fff8f0", border: "1px solid #c87a3a", borderRadius: "8px", padding: "20px", maxWidth: "480px", width: "100%", color: "#8b4513", fontSize: "13px", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
-        <div style={{ fontWeight: "bold", marginBottom: "12px" }}>⚠️ 오류 상세</div>
-        <div>{error}</div>
-        <button onClick={handleReset} style={{ marginTop: "16px", padding: "8px 20px", background: "#5a7a5a", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontFamily: F }}>
-          처음으로
-        </button>
-      </div>
-    </div>
-  );
-}
-
-
   if (appState === AppState.IDLE) {
+    return (
       <div
         style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: BG, fontFamily: F }}
         onClick={handleOutsideClick}
@@ -263,39 +242,30 @@ const App: React.FC = () => {
             @media(prefers-reduced-motion:reduce){ .maple-g { animation:none; transform:translate(0,0) rotate(5deg) scale(1); opacity:1; } }
           ` }} />
 
-          {/* 오픈북 외곽 */}
           <div style={{ width: "100%", maxWidth: 920, border: `3px solid ${GREEN_DARK}`, borderRadius: 6, boxShadow: "0 10px 26px rgba(0,0,0,0.16),0 2px 8px rgba(0,0,0,0.08)", position: "relative", marginTop: 12 }}>
             <div style={{ position: "absolute", left: -3, right: -3, top: -13, height: 13, background: `linear-gradient(to bottom,#0f2018,${GREEN_DARK} 60%,#4f6b59)`, border: `3px solid ${GREEN_DARK}`, borderBottom: "none", borderRadius: "4px 4px 0 0", zIndex: 20 }} />
 
-
             <div className="book-inner" style={{ display: "flex" }}>
-              {/* 왼쪽 엣지 */}
               <div className="book-edge-l" style={{ width: "clamp(8px,1.2vw,13px)", flexShrink: 0, zIndex: 5, position: "relative", background: "repeating-linear-gradient(to right,#ede3ce 0,#ede3ce 1.5px,#c8b888 2px,#f0e6d4 4px,#c8b888 4.5px,#ede3ce 6px,#c8b888 6.5px,#f0e6d4 8.5px,#c8b888 9px,#ede3ce 13px)" }}>
                 <div style={{ position: "absolute", left: 0, top: -13, bottom: 0, width: 6, background: GREEN_DARK }} />
               </div>
 
-              {/* ── 왼쪽 페이지: 이용 안내 ── */}
               <div className="book-left-page" style={{ flex: 1, ...paperStyle(PAGE1), padding: "22px 18px 30px 20px", borderRight: `1px dashed ${BORDER}`, display: "flex", flexDirection: "column", gap: 0 }}>
-                {/* 로고 배너 */}
                 <div style={{ background: `linear-gradient(135deg,${GREEN_DARK} 0%,#1a3224 100%)`, borderRadius: 10, padding: "14px 16px", marginBottom: 16, boxShadow: "0 6px 18px rgba(0,0,0,0.12)" }}>
                   <div style={{ display: "flex", alignItems: "flex-start", gap: 11 }}>
                     <div style={{ flexShrink: 0, width: 52, marginTop: -8, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
                       <svg width="52" height="80" viewBox="-22 -42 44 62" xmlns="http://www.w3.org/2000/svg">
-                        {/* 책1: 민트 — 라벤더 방향(오른쪽)으로 기댐 */}
                         <g transform="rotate(20, -2, 18)">
                           <rect x="-18" y="-4" width="11" height="22" rx="2" fill="#a8d8c8"/>
                           <rect x="-18" y="-4" width="2.5" height="22" fill="#7ab8a4"/>
                         </g>
-                        {/* 책2: 라벤더 — 곧게 */}
                         <rect x="-2"  y="-22" width="14" height="40" rx="2" fill="#c4b8d8"/>
                         <rect x="-2"  y="-22" width="2.5" height="40" fill="#a098b8"/>
-                        {/* Twemoji 단풍잎 — 두 책 사이 */}
                         <g className="maple-g" style={{ transformOrigin: "-5px -10px" }}>
                           <g transform="translate(-5,-10) scale(0.48) translate(-18,-18)">
                             <path fill="#DD2E44" d="M36 20.917c0-.688-2.895-.5-3.125-1s3.208-4.584 2.708-5.5s-5.086 1.167-5.375.708c-.288-.458.292-3.5-.208-3.875s-5.25 4.916-5.917 4.292c-.666-.625 1.542-10.5 1.086-10.698c-.456-.198-3.419 1.365-3.793 1.282C21.002 6.042 18.682 0 18 0s-3.002 6.042-3.376 6.125c-.374.083-3.337-1.48-3.793-1.282c-.456.198 1.752 10.073 1.085 10.698C11.25 16.166 6.5 10.875 6 11.25s.08 3.417-.208 3.875c-.289.458-4.875-1.625-5.375-.708s2.939 5 2.708 5.5s-3.125.312-3.125 1s8.438 5.235 9 5.771c.562.535-2.914 2.802-2.417 3.229c.576.496 3.839-.83 10.417-.957V35a1 1 0 1 0 2 0v-6.04c6.577.127 9.841 1.453 10.417.957c.496-.428-2.979-2.694-2.417-3.229c.562-.536 9-5.084 9-5.771z"/>
                           </g>
                         </g>
-                        {/* 선반 */}
                         <rect x="-22" y="18"  width="40" height="5.5" rx="1.5" fill="#a07828"/>
                         <rect x="-20" y="23"  width="36" height="2.5" rx="1"   fill="#8a6420" opacity="0.55"/>
                       </svg>
@@ -308,7 +278,6 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 이용 안내 용지 */}
                 <div style={{ flex: 1, borderRadius: 8, overflow: "hidden", border: `1px solid ${BORDER}`, background: "#fdf8ee" }}>
                   <div style={{ padding: "7px 14px", borderBottom: `1px dashed ${BORDER}`, background: "rgba(245,240,228,0.55)", display: "flex", alignItems: "center", gap: 5 }}>
                     <span style={{ color: GOLD_DIM, fontFamily: F, fontSize: 11 }}>✦</span>
@@ -340,7 +309,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* ── 가름대 ── */}
               <div className="book-spine" style={{ width: "clamp(16px,2.2vw,24px)", flexShrink: 0, position: "relative", zIndex: 10, backgroundColor: PAGE1 }}>
                 <div style={{ position: "absolute", top: 0, bottom: 24, left: "50%", transform: "translateX(-50%)", width: 7, background: `linear-gradient(90deg,${GREEN_DARK} 0%,#2e6040 20%,${GREEN_MID} 45%,#4a9060 50%,${GREEN_MID} 55%,#2e6040 80%,${GREEN_DARK} 100%)`, zIndex: 11 }} />
                 <div style={{ position: "absolute", bottom: 4, left: "50%", transform: "translateX(-50%)", width: 14, height: 14, zIndex: 13 }}>
@@ -349,10 +317,8 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* ── 오른쪽 페이지: 타이틀 + 계절 선택 + 입력 + 서재 ── */}
               <div style={{ flex: 1, ...paperStyle(PAGE2), padding: "22px 20px 30px 18px", display: "flex", flexDirection: "column", gap: 13, position: "relative", overflow: "visible" }}>
 
-                {/* 타이틀 */}
                 <div style={{ paddingBottom: 10, borderBottom: `1px dashed ${BORDER}`, position: "relative" }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 3 }}>
                     <button type="button" onClick={handleReset} style={{ background: "none", border: "none", cursor: "pointer", color: MUTED, opacity: 0.7, padding: 2, display: "flex", alignItems: "center" }}>
@@ -361,7 +327,6 @@ const App: React.FC = () => {
                     <h2 style={{ fontFamily: F, fontSize: 21, color: INK, letterSpacing: "0.04em", margin: 0 }}>마음서가</h2>
                     <span style={{ fontFamily: F, fontSize: 12, color: MUTED }}>·</span>
                     <span style={{ fontFamily: F, fontSize: 11, color: MUTED, letterSpacing: "0.06em" }}>Mind Shelf</span>
-                    {/* ⋯ 메뉴 */}
                     <div style={{ position: "relative" }}>
                       <button type="button" onClick={() => setIsMenuOpen(p => !p)}
                         style={{ background: isMenuOpen ? "rgba(110,84,40,0.08)" : "none", border: `1px solid rgba(110,84,40,0.3)`, borderRadius: 5, cursor: "pointer", padding: "4px 7px", display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 20, transition: "all 0.15s" }}>
@@ -374,7 +339,6 @@ const App: React.FC = () => {
                       </button>
                       {isMenuOpen && (
                         <>
-                          {/* 바깥 클릭 닫기 */}
                           <div style={{ position: "fixed", inset: 0, zIndex: 99 }} onClick={() => setIsMenuOpen(false)} />
                           <div style={{ position: "absolute", top: "calc(100% + 4px)", right: 0, zIndex: 100, background: "#fdf8ee", border: `1px solid ${BORDER}`, borderRadius: 8, boxShadow: "0 4px 14px rgba(0,0,0,0.10)", minWidth: 130, overflow: "hidden" }}>
                             <button type="button" onClick={handleShare}
@@ -395,7 +359,6 @@ const App: React.FC = () => {
                   <p style={{ fontFamily: GB_FONT, fontSize: 12, color: MUTED, textAlign: "center" }}>마음을 기록하고, 책을 만나보세요</p>
                 </div>
 
-                {/* 마음의 계절 선택 */}
                 <div id="seasonWrap" style={{ position: "relative" }} onClick={e => e.stopPropagation()}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
                     <span style={{ fontFamily: F, fontSize: 9.5, letterSpacing: "0.1em", color: "#6e5428" }}>── 마음의 계절 선택 ──</span>
@@ -417,7 +380,6 @@ const App: React.FC = () => {
                     })}
                   </div>
 
-                  {/* 감정 팝업 — 여러 개 선택 후 바깥 클릭 또는 완료 버튼으로 닫힘 */}
                   {emotionPopupSeason && (
                     <div style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 50, background: "#fdf8ee", border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 12px", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
@@ -450,7 +412,6 @@ const App: React.FC = () => {
                   )}
                 </div>
 
-                {/* 감정 입력창 */}
                 <div style={{ borderRadius: 8, overflow: "hidden", border: `1px solid ${BORDER}`, background: "#fdf8ee", boxShadow: "0 2px 10px rgba(0,0,0,0.04)" }}>
                   <div style={{ padding: "6px 12px", borderBottom: `1px dashed ${BORDER}`, background: "rgba(245,240,228,0.52)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <span style={{ fontFamily: F, fontSize: 9.5, color: MUTED }}>✍️ 오늘의 마음 기록</span>
@@ -484,7 +445,6 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 서가 기록 */}
                 <div style={{ borderRadius: 8, overflow: "hidden", border: `1px solid ${BORDER}`, background: PAGE2 }}>
                   <button type="button" onClick={() => setIsSavedOpen(p => !p)}
                     style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 13px", background: "none", border: "none", cursor: "pointer" }}>
@@ -520,7 +480,6 @@ const App: React.FC = () => {
                   )}
                 </div>
 
-                {/* 북마크 도서 */}
                 <div style={{ borderRadius: 8, overflow: "hidden", border: `1px solid ${BORDER}`, background: PAGE2 }}>
                   <button type="button" onClick={() => setIsBookmarksOpen(p => !p)}
                     style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 13px", background: "none", border: "none", cursor: "pointer" }}>
@@ -554,7 +513,6 @@ const App: React.FC = () => {
 
               </div>
 
-              {/* 오른쪽 엣지 */}
               <div className="book-edge-r" style={{ width: "clamp(8px,1.2vw,13px)", flexShrink: 0, zIndex: 5, position: "relative", background: "repeating-linear-gradient(to left,#ede3ce 0,#ede3ce 1.5px,#c8b888 2px,#f0e6d4 4px,#c8b888 4.5px,#ede3ce 6px,#c8b888 6.5px,#f0e6d4 8.5px,#c8b888 9px,#ede3ce 13px)" }}>
                 <div style={{ position: "absolute", right: 0, top: -13, bottom: 0, width: 6, background: GREEN_DARK }} />
               </div>
@@ -587,7 +545,6 @@ const App: React.FC = () => {
             <span className="dot-wave" />
             <span className="dot-wave" />
           </div>
-
         </div>
       </div>
     );
@@ -604,19 +561,17 @@ const App: React.FC = () => {
     );
   }
 
-   // ── ERROR ─────────────────────────────────────────────────────────────────
-  if (appState === AppState.ERROR) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px", background: BG, fontFamily: F }}>
-        <div style={{ maxWidth: 400, width: "100%", textAlign: "center", padding: "32px", borderRadius: 16, background: PAGE2, border: "1px solid rgba(180,80,60,0.2)", boxShadow: "0 6px 18px rgba(0,0,0,0.06)" }}>
-          <p style={{ fontFamily: GB_FONT, fontSize: 13.5, color: "#7a3020", marginBottom: 20, lineHeight: 1.7 }}>{error}</p>
-          <button type="button" onClick={() => setAppState(AppState.IDLE)} style={{ fontFamily: F, fontSize: 12, color: GREEN_DARK, background: "none", border: "none", cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 3 }}>
-            다시 시도하기
-          </button>
-        </div>
+  // ── ERROR ─────────────────────────────────────────────────────────────────
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px", background: BG, fontFamily: F }}>
+      <div style={{ maxWidth: 400, width: "100%", textAlign: "center", padding: "32px", borderRadius: 16, background: PAGE2, border: "1px solid rgba(180,80,60,0.2)", boxShadow: "0 6px 18px rgba(0,0,0,0.06)" }}>
+        <p style={{ fontFamily: GB_FONT, fontSize: 13.5, color: "#7a3020", marginBottom: 20, lineHeight: 1.7 }}>{error}</p>
+        <button type="button" onClick={() => setAppState(AppState.IDLE)} style={{ fontFamily: F, fontSize: 12, color: GREEN_DARK, background: "none", border: "none", cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 3 }}>
+          다시 시도하기
+        </button>
       </div>
-    );
-  }
-  return null;
+    </div>
+  );
 };
+
 export default App;
