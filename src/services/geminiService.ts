@@ -350,7 +350,7 @@ export const getPrescription = async (
     // ✅ 503 자동 재시도 (최대 3회, 1.5s→3s→6s backoff)
     const response = await withRetry(() =>
       ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-1.5-flash",
         contents: userMetrics,
         config: {
           systemInstruction: SYSTEM_INSTRUCTION,
