@@ -155,13 +155,13 @@ const App: React.FC = () => {
         userInput: input, prescription: result,
       };
       setSavedPrescriptions(savePrescriptionToStorage(savedItem));
-      // 마지막 처방 localStorage 저장 (새로고침 복원용)
       try { localStorage.setItem("lastPrescription", JSON.stringify({ prescription: result, userInput: input })); } catch { /* 저장 실패 무시 */ }
       refreshBookmarks();
       setAppState(AppState.PRESCRIBED);
     } catch (err) {
       console.error(err);
-      setError("죄송합니다. 추천을 생성하는 도중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      const errMsg = err instanceof Error ? err.message : JSON.stringify(err);
+      setError(`오류: ${errMsg}`);
       setAppState(AppState.ERROR);
     }
   };
