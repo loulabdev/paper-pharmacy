@@ -160,8 +160,7 @@ const App: React.FC = () => {
       setAppState(AppState.PRESCRIBED);
     } catch (err) {
       console.error(err);
-      const errMsg = err instanceof Error ? err.message : JSON.stringify(err);
-      setError(`오류: ${errMsg}`);
+      setError("죄송합니다. 추천을 생성하는 도중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.");
       setAppState(AppState.ERROR);
     }
   };
