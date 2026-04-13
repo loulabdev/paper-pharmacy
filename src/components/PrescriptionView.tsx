@@ -551,10 +551,10 @@ const PrescriptionView: React.FC<Props> = ({ data, onReset, onBookmarksChange })
     return (
       <>
         {hasSearched && !isLoading && (
-  <div style={{ fontSize: 9, color: "#888", padding: "2px 4px" }}>
-    전체:{allLibraries.length} / 필터:{filtered.length} / 지역:{userRegionName || "미확인"}
-  </div>
-)}
+        <div style={{ fontSize: 9, color: "#888", padding: "2px 4px" }}>
+         전체:{allLibraries.length} / 필터:{filtered.length} / 지역:{userRegionName || "미확인"}
+        </div>
+        )}
         {!hasSearched && !isLoading && (
           <p style={{ ...SE, fontSize: 10, color: C.ink3, textAlign: "center", padding: "4px 0" }}>추가 검색에서 도서관 조회를 선택하세요</p>
         )}
