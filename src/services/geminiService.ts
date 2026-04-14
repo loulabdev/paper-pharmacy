@@ -350,7 +350,11 @@ export const getPrescription = async (
     // ✅ 503 자동 재시도 (최대 3회, 1.5s→3s→6s backoff)
     const response = await withRetry(() =>
       ai.models.generateContent({
+<<<<<<< HEAD
         model: "gemini-2.0-flash",
+=======
+        model: "gemini-2.5-flash",
+>>>>>>> 3704ff729e1348fcdfbc05346461f5c5cd49bdc3
         contents: userMetrics,
         config: {
           systemInstruction: SYSTEM_INSTRUCTION,
@@ -370,11 +374,14 @@ export const getPrescription = async (
 
     return validateAndNormalizePrescription(parsed);
   } catch (error: unknown) {
-    console.error("Error fetching prescription:", error);
+   const msg = error instanceof Error 
+    ? error.message 
+    : JSON.stringify(error);
+  
+  console.error("GEMINI_ERROR:", msg);
 
-    // 503 → 사용자 친화적 커스텀 에러로 변환
-    if (is503Error(error)) throw new GeminiUnavailableError();
-
-    throw error;
-  }
+  if (is503Error(error)) throw new GeminiUnavailableError();
+  
+  throw new Error("GEMINI_ERROR: " + msg);
+}
 };
